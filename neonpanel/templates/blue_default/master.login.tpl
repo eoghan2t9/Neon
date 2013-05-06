@@ -31,7 +31,7 @@
 <body>
 	<div class="loginform">
 		<div class="title">
-			<img src="templates/blue_default/img/logo.png" width="112" height="35" />
+			<img src="templates/blue_default/img/logo.png" />
 		</div>
 
 		<div class="body">
