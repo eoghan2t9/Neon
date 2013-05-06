@@ -13,6 +13,7 @@ function get_json($url){
 	curl_setopt($curl, CURLOPT_URL, $base . $url);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5');
 	$content = curl_exec($curl);
 	curl_close($curl);
 	return $content;
