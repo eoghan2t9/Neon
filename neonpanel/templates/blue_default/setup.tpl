@@ -1,7 +1,7 @@
 <div id="InitialSetup">
 	<div class="loginform" style="margin-top:0;">
 		<div class="title">
-			<img src="templates/blue_default/img/logo.png" />
+			<img src="templates/blue_default/img/logo.png" width="187" height="68"  />
 		</div>
 
 		<div class="body">

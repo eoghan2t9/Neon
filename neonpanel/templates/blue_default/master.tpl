@@ -52,7 +52,7 @@
 	<!-- START HEADER -->
     <div id="header">
     	<!-- logo -->
-    	<div class="logo">	<a href="main.php"><img src="templates/blue_default/img/logo.png" alt="logo"/></a>	</div>
+    	<div class="logo">	<a href="main.php"><img src="templates/blue_default/img/logo.png" width="187" height="68" alt="logo"/></a>	</div>
 
         <!-- notifications -->
         <div id="notifications">
