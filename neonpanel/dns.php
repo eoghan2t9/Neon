@@ -28,15 +28,15 @@ if($LoggedIn === false){
 		}
 	}
 	
-	if(($sAction == view_records) && (!empty($sDomain)){
+	if(($sAction == view_records) && (!empty($sDomain))){
 	
 	}
 	
-	if(($sAction ==  edit_record) && (!empty($sDomain)){
+	if(($sAction ==  edit_record) && (!empty($sDomain))){
 	
 	}
 	
-	if(($sAction == delete_record) && (!empty($sDomain)){
+	if(($sAction == delete_record) && (!empty($sDomain))){
 	
 	}
 	
