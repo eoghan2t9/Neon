@@ -28,8 +28,13 @@ if($LoggedIn === false){
 		}
 	}
 	
-	if(($sAction == view_records) && (!empty($sDomain))){
-	
+	if(!empty($sDomain)){
+		if($sPowerDomain = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array('Domain' => $sDomain), 1)){
+			$sPowerRecords = $database->CachedQuery("SELECT * FROM dns.records WHERE `domain_id` = :DomainId", array('DomainId' => $sPowerDomain->[0]["id"]), 1);
+			foreach($sPowerRecords->data as $key => $value){
+				$sRecords[] = array("name" => $value["name"], "type" => $value["type"], "content" => $value["content"]);
+			}
+		}
 	}
 	
 	if(($sAction ==  edit_record) && (!empty($sDomain))){
@@ -44,6 +49,7 @@ if($LoggedIn === false){
 		'ErrorMessage'	=>	"",
 		'DomainList' => $sDomainList,
 		'Domain' => $sDomain,
+		'Records' => $sRecords,
 	));
 	echo Templater::AdvancedParse('/blue_default/master', $locale->strings, array(
 		'PageTitle'  => "DNS Manager",

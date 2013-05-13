@@ -29,6 +29,14 @@ if($LoggedIn === false){
 		if(!empty($sDatabaseName)){
 			$sDatabaseName = $sUser->sUsername."_".$sDatabaseName;
 			$sCreateDatabase = $database->CachedQuery("CREATE DATABASE {$sDatabaseName}", array(), 1);
+			foreach($sPermissionsList as $key => $value){
+				if(!empty($sFirst)){
+					$sGrantQuery .= ", ";
+				}
+				$sGrantQuery .= $value;
+				$sFirst = 1;
+			}
+			$sAddUserToDatabase = $database->CachedQuery("GRANT {$sGrantQuery} ON {$sDatabaseName}.* TO '{$sUser->sUsername}'@'localhost';FLUSH PRIVILEGES;", array(), 1);
 		}
 	}
 	
