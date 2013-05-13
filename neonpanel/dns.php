@@ -13,7 +13,7 @@ if($LoggedIn === false){
 	if(!empty($_GET['domain'])){
 		$uDomain = $_GET['domain'];
 		if($sDomainReturn = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId AND `domain_name` = :Domain", array('UserId' => $sUser->sId, 'Domain' => $uDomain), 1)){
-			$sDomain = $sDomainReturn->sDomainName;
+			$sDomain = $sDomainReturn->data["domain_name"];
 		} else {
 			header("Location: dns.php");
 			die();
