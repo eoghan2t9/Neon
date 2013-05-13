@@ -97,7 +97,7 @@
 						</div>
 						<div class="st-form-line">	
 							<span class="st-labeltext">Record:</span>	
-							<input name="content" type="text" class="st-forminput" id="content" style="width:100px" value="(%?DefaultIP}" /> 
+							<input name="content" type="text" class="st-forminput" id="content" style="width:100px" value="{%?DefaultIP}" /> 
 							<div class="clear"></div>
 						</div>
 						<div class="button-box">
