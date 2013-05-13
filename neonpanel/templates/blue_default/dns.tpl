@@ -65,5 +65,4 @@
 			</table>
 		</div>
 	{%/if}
-	{%/if}
 </div>
