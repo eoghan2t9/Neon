@@ -23,7 +23,7 @@ if($LoggedIn === false){
 	if(empty($sDomain)){
 		if($sDomains = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId", array('UserId' => $sUser->sId), 1)){
 			foreach($sDomains->data as $key => $value){
-				$sDomainsList[] = $value["domain_name"];
+				$sDomainList[] = $value["domain_name"];
 			}
 		}
 	}
@@ -42,7 +42,7 @@ if($LoggedIn === false){
 	
 	$sContent = Templater::AdvancedParse('/blue_default/dns', $locale->strings, array(
 		'ErrorMessage'	=>	"",
-		'DomainList' => $sDomainList->data,
+		'DomainList' => $sDomainList,
 		'Domain' => $sDomain,
 	));
 	echo Templater::AdvancedParse('/blue_default/master', $locale->strings, array(
