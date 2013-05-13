@@ -77,12 +77,12 @@
 					<form id="form2" name="form2" method="post" action="dns.php?domain={%?Domain}&action=add_record">
 						<div class="st-form-line">	
 							<span class="st-labeltext">Entry:</span>	
-							<input name="name" type="text" class="st-forminput" id="name" style="width:100px" value="example.domain.com" onclick="this.value='';" /> 
+							<input name="name" type="text" class="st-forminput" id="name" style="width:250px" value="example.domain.com" onclick="this.value='';" /> 
 							<div class="clear"></div>
 						</div>
 						<div class="st-form-line">
 							<span class="st-labeltext">Type:</span>	
-							<select name="type" id="type" class="uniform">
+							<select name="type" id="type" class="uniform" style="width:250px">
 								<option value="A">A</option>
 								<option value="AAAA">AAAA</option>
 								<option value="CNAME">CNAME</option>
@@ -97,7 +97,7 @@
 						</div>
 						<div class="st-form-line">	
 							<span class="st-labeltext">Record:</span>	
-							<input name="content" type="text" class="st-forminput" id="content" style="width:100px" value="{%?DefaultIP}" /> 
+							<input name="content" type="text" class="st-forminput" id="content" style="width:250px" value="{%?DefaultIP}" /> 
 							<div class="clear"></div>
 						</div>
 						<div class="button-box">
