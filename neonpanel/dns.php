@@ -12,7 +12,7 @@ if($LoggedIn === false){
 	
 	if(!empty($_GET['domain'])){
 		$uDomain = $_GET['domain'];
-		if($sDomainReturn = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId AND `domain_name` = :Domain", array('UserId' => $sUser->sId, 'Domain' => $uDomain), 1)){
+		if($sDomainReturn = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId AND `domain_name` = :Domain", array(':UserId' => $sUser->sId, ':Domain' => $uDomain), 1)){
 			$sDomain = $sDomainReturn->data[0]["domain_name"];
 		} else {
 			header("Location: dns.php");
@@ -21,7 +21,7 @@ if($LoggedIn === false){
 	}
 	
 	if(empty($sDomain)){
-		if($sDomains = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId", array('UserId' => $sUser->sId), 1)){
+		if($sDomains = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId", array(':UserId' => $sUser->sId), 1)){
 			foreach($sDomains->data as $key => $value){
 				$sDomainList[] = $value["domain_name"];
 			}
@@ -29,8 +29,8 @@ if($LoggedIn === false){
 	}
 	
 	if(!empty($sDomain)){
-		if($sPowerDomain = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array('Domain' => $sDomain), 1)){
-			$sPowerRecords = $database->CachedQuery("SELECT * FROM dns.records WHERE `domain_id` = :DomainId", array('DomainId' => $sPowerDomain->[0]["id"]), 1);
+		if($sPowerDomain = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1)){
+			$sPowerRecords = $database->CachedQuery("SELECT * FROM dns.records WHERE `domain_id` = :DomainId", array(':DomainId' => $sPowerDomain->data[0]["id"]), 1);
 			foreach($sPowerRecords->data as $key => $value){
 				$sRecords[] = array("name" => $value["name"], "type" => $value["type"], "content" => $value["content"]);
 			}
