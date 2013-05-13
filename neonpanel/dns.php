@@ -5,7 +5,8 @@ if($LoggedIn === false){
 	header("Location: index.php");
 	die();
 } else {
-
+	
+	// Get the variables if they exist and check them.
 	if(!empty($_GET['action'])){
 		$sAction = $_GET['action'];
 	}
@@ -20,6 +21,20 @@ if($LoggedIn === false){
 		}
 	}
 	
+	// Perform actions before loading records.
+	if(($sAction ==  edit_record) && (!empty($sDomain))){
+	
+	}
+	
+	if(($sAction == delete_record) && (!empty($sDomain))){
+	
+	}
+	
+	if(($sAction == add_record) && (!empty($sDomain))){
+	
+	}
+	
+	// Setup domain list if the user hasn't selected a domain yet.
 	if(empty($sDomain)){
 		if($sDomains = $database->CachedQuery("SELECT * FROM domains WHERE `user_id` = :UserId", array(':UserId' => $sUser->sId), 1)){
 			foreach($sDomains->data as $key => $value){
@@ -28,6 +43,7 @@ if($LoggedIn === false){
 		}
 	}
 	
+	// Setup a list of records if the user has already selected a domain.
 	if(!empty($sDomain)){
 		if($sPowerDomain = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1)){
 			$sPowerRecords = $database->CachedQuery("SELECT * FROM dns.records WHERE `domain_id` = :DomainId", array(':DomainId' => $sPowerDomain->data[0]["id"]), 1);
@@ -37,14 +53,7 @@ if($LoggedIn === false){
 		}
 	}
 	
-	if(($sAction ==  edit_record) && (!empty($sDomain))){
-	
-	}
-	
-	if(($sAction == delete_record) && (!empty($sDomain))){
-	
-	}
-	
+	// Display result to user.
 	$sContent = Templater::AdvancedParse('/blue_default/dns', $locale->strings, array(
 		'ErrorMessage'	=>	"",
 		'DomainList' => $sDomainList,
