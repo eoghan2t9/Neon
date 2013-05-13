@@ -69,7 +69,7 @@
 				</table>
 			</div>
 			<br><br>
-			<div class="simplebox grid740">
+			<div class="simplebox grid740" style="text-align:left;">
 				<div class="titleh">
 					<h3>Add Record</h3>
 				</div>
