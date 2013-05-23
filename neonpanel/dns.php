@@ -23,7 +23,13 @@ if($LoggedIn === false){
 	
 	// Perform actions before loading records.
 	if(($sAction ==  edit_record) && (!empty($sDomain))){
-		$sRecord = $_GET['record'];
+		$uRecord = $_GET['record'];
+		if(is_numeric($sRecord)){
+			$sRecord = $uRecord;
+		} else {
+			header("Location: dns.php");
+			die();
+		}
 		if($_GET['update'] == 1){
 			$sName = $_POST['name'];
 			$sType = $_POST['type'];
@@ -85,6 +91,7 @@ if($LoggedIn === false){
 		'Domain' => $sDomain,
 		'Records' => $sRecords,
 		'Edit' => $sEdit,
+		'Record' => $sRecord,
 	));
 	echo Templater::AdvancedParse('/blue_default/master', $locale->strings, array(
 		'PageTitle'  => "DNS Manager",
