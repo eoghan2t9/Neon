@@ -38,8 +38,8 @@ if($LoggedIn === false){
 			$sUpdate = $database->CachedQuery("UPDATE dns.records SET `name` = :Name, `type` = :Type, `content` = :Content WHERE `id` = :Id AND `domain_id` = :DomainId", array(':Name' => $sName, ':Type' => $sType, ':Content' => $sContent, ':Id' => $sRecord, ':DomainId' => $sDomainLookup->data[0]["id"]), 1);
 		} else {
 			$sDomainLookup = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1);
-			if($sRecord = $database->CachedQuery("SELECT * FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':Id' => $sRecord, ':DomainId' => $sDomainLookup->data[0]["id"]), 1)){
-					$sEdit = array("id" => $sRecord->data[0]["id"], "name" => $sRecord->data[0]["name"], "type" => $sRecord->data[0]["type"], "content" => $sRecord->data[0]["content"]);
+			if($sPullRecord = $database->CachedQuery("SELECT * FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':Id' => $sRecord, ':DomainId' => $sDomainLookup->data[0]["id"]), 1)){
+					$sEdit = array("id" => $sPullRecord->data[0]["id"], "name" => $sPullRecord->data[0]["name"], "type" => $sPullRecord->data[0]["type"], "content" => $sPullRecord->data[0]["content"]);
 			} else {
 				header("Location: dns.php");
 				die();
