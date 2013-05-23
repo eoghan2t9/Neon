@@ -26,7 +26,7 @@ if($LoggedIn === false){
 		$sRecord = $_GET['record'];
 		if($sCheckDomain = $database->CachedQuery("SELECT * FROM domains WHERE `domain_name` = :Domain AND `user_id` = :UserId", array(':Domain' => $sDomain, ':UserId' => $sUser->sId), 1)){
 			if($sDomainData = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1)){
-				$sDelete = $database->CachedQuery("DELETE FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':DomainId' => $sDomainData->data[0]["id"]), 1)
+				$sDelete = $database->CachedQuery("DELETE FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':DomainId' => $sDomainData->data[0]["id"]), 1);
 			}
 		}
 	}
