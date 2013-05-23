@@ -9,10 +9,10 @@ NewTemplater::SetGlobalVariable("RegistrationEnabled", $sRegistrationEnabled->sV
 $sForgotPasswordEnabled = Core::GetSetting('forgotpassword_enabled');
 NewTemplater::SetGlobalVariable("ForgotPasswordEnabled", $sForgotPasswordEnabled->sValue);
 $sDefaultIP = Core::GetSetting('default_ip');
-if($sDefaultIP == localhost){
+if($sDefaultIP->sValue == localhost){
 	$sServerIP = $_SERVER['SERVER_ADDR'];
 	$sUpdateIP = $database->CachedQuery("UPDATE settings SET `setting_value` = :ServerIP WHERE `setting_name` = :SettingName", array(':ServerIP' => $sServerIP, ':SettingName' => 'default_ip'), 5);
-	$sDefaultIP = $sServerIP;
+	$sDefaultIP = Core::GetSetting('default_ip');
 }
 NewTemplater::SetGlobalVariable("DefaultIP", $sDefaultIP->sValue);
 $sMaxPanelUploadSize = Core::GetSetting('max_panel_upload_size');
