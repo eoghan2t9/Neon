@@ -40,7 +40,7 @@
 						<form id="form2" name="form2" method="post" action="dns.php?domain={%?Domain}&action=edit_record&update=1&record={%?Record}">
 							<div class="st-form-line">	
 								<span class="st-labeltext">Entry:</span>	
-								<input name="name" type="text" class="st-forminput" id="name" style="width:250px" value="{%?listing[name]}" onclick="this.value='';" /> 
+								<input name="name" type="text" class="st-forminput" id="name" style="width:250px" value="{%?listing[name]}" /> 
 								<div class="clear"></div>
 							</div>
 							<div class="st-form-line">
