@@ -39,7 +39,7 @@ if($LoggedIn === false){
 		} else {
 			$sDomainLookup = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1);
 			if($sPullRecord = $database->CachedQuery("SELECT * FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':Id' => $sRecord, ':DomainId' => $sDomainLookup->data[0]["id"]), 1)){
-					$sEdit = array("id" => $sPullRecord->data[0]["id"], "name" => $sPullRecord->data[0]["name"], "type" => $sPullRecord->data[0]["type"], "content" => $sPullRecord->data[0]["content"]);
+					$sEdit[] = array("id" => $sPullRecord->data[0]["id"], "name" => $sPullRecord->data[0]["name"], "type" => $sPullRecord->data[0]["type"], "content" => $sPullRecord->data[0]["content"]);
 			} else {
 				header("Location: dns.php");
 				die();
