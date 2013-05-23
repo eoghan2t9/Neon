@@ -23,7 +23,12 @@ if($LoggedIn === false){
 	
 	// Perform actions before loading records.
 	if(($sAction ==  edit_record) && (!empty($sDomain))){
-	
+		$sRecord = $_GET['record'];
+		if($sCheckDomain = $database->CachedQuery("SELECT * FROM domains WHERE `domain_name` = :Domain AND `user_id` = :UserId", array(':Domain' => $sDomain, ':UserId' => $sUser->sId), 1)){
+			if($sDomainData = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1)){
+				$sDelete = $database->CachedQuery("DELETE FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':DomainId' => $sDomainData->data[0]["id"]), 1)
+			}
+		}
 	}
 	
 	if(($sAction == delete_record) && (!empty($sDomain))){
@@ -53,7 +58,7 @@ if($LoggedIn === false){
 		if($sPowerDomain = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1)){
 			$sPowerRecords = $database->CachedQuery("SELECT * FROM dns.records WHERE `domain_id` = :DomainId", array(':DomainId' => $sPowerDomain->data[0]["id"]), 1);
 			foreach($sPowerRecords->data as $key => $value){
-				$sRecords[] = array("name" => $value["name"], "type" => $value["type"], "content" => $value["content"]);
+				$sRecords[] = array("id" => $value["id"], "name" => $value["name"], "type" => $value["type"], "content" => $value["content"]);
 			}
 		}
 	}
