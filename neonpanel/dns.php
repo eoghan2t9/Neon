@@ -23,7 +23,22 @@ if($LoggedIn === false){
 	
 	// Perform actions before loading records.
 	if(($sAction ==  edit_record) && (!empty($sDomain))){
-
+		$sRecord = $_GET['record'];
+		if($_GET['update'] == 1){
+			$sName = $_POST['name'];
+			$sType = $_POST['type'];
+			$sContent = $_POST['content'];
+			$sDomainLookup = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1);
+			$sUpdate = $database->CachedQuery("UPDATE dns.records SET `name` = :Name, `type` = :Type, `content` = :Content WHERE `id` = :Id AND `domain_id` = :DomainId", array(':Name' => $sName, ':Type' => $sType, ':Content' => $sContent, ':Id' => $sRecord, ':DomainId' => $sDomainLookup->data[0]["id"]), 1);
+		} else {
+			$sDomainLookup = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1);
+			if($sRecord = $database->CachedQuery("SELECT * FROM dns.records WHERE `id` = :Id AND `domain_id` = :DomainId", array(':Id' => $sRecord, ':DomainId' => $sDomainLookup->data[0]["id"]), 1)){
+					$sEdit = array("id" => $sRecord->data[0]["id"], "name" => $sRecord->data[0]["name"], "type" => $sRecord->data[0]["type"], "content" => $sRecord->data[0]["content"]);
+			} else {
+				header("Location: dns.php");
+				die();
+			}
+		}
 	}
 	
 	if(($sAction == delete_record) && (!empty($sDomain))){
@@ -69,6 +84,7 @@ if($LoggedIn === false){
 		'DomainList' => $sDomainList,
 		'Domain' => $sDomain,
 		'Records' => $sRecords,
+		'Edit' => $sEdit,
 	));
 	echo Templater::AdvancedParse('/blue_default/master', $locale->strings, array(
 		'PageTitle'  => "DNS Manager",

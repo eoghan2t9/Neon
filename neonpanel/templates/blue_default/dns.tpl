@@ -31,7 +31,45 @@
 	{%/if}
 	{%if isset|Domain == true}
 		{%if isset|Edit == true}
-			
+			<div class="simplebox grid740" style="text-align:left;">
+				<div class="titleh">
+					<h3>Edit Record</h3>
+				</div>
+				{%foreach listing in Edit}
+					<div class="body">
+						<form id="form2" name="form2" method="post" action="dns.php?domain={%?Domain}&action=edit_record&update=1%record={%?Record}">
+							<div class="st-form-line">	
+								<span class="st-labeltext">Entry:</span>	
+								<input name="name" type="text" class="st-forminput" id="name" style="width:250px" value="{%?listing[name]}" onclick="this.value='';" /> 
+								<div class="clear"></div>
+							</div>
+							<div class="st-form-line">
+								<span class="st-labeltext">Type:</span>	
+								<select name="type" id="type" class="uniform" style="width:250px">
+									<option value="A"{%if listing[type] == A} selected="selected"{%/if}>A</option>
+									<option value="AAAA"{%if listing[type] == AAAA} selected="selected"{%/if}>AAAA</option>
+									<option value="CNAME"{%if listing[type] == CNAME} selected="selected"{%/if}>CNAME</option>
+									<option value="MX"{%if listing[type] == MX} selected="selected"{%/if}>MX</option>
+									<option value="NS"{%if listing[type] == NS} selected="selected"{%/if}>NS</option>
+									<option value="SOA"{%if listing[type] == SOA} selected="selected"{%/if}>SOA</option>
+									<option value="SPF"{%if listing[type] == SPF} selected="selected"{%/if}>SPF</option>
+									<option value="SRV"{%if listing[type] == SRV} selected="selected"{%/if}>SRV</option>
+									<option value="TXT"{%if listing[type] == TXT} selected="selected"{%/if}>TXT</option>
+								</select>
+								<div class="clear"></div>
+							</div>
+							<div class="st-form-line">	
+								<span class="st-labeltext">Record:</span>	
+								<input name="content" type="text" class="st-forminput" id="content" style="width:250px" value="{%?listing[content]}" /> 
+								<div class="clear"></div>
+							</div>
+							<div class="button-box">
+								<input type="submit" name="button" id="button" value="Submit" class="st-button"/>
+							</div>
+						</form>
+					</div>
+				{%/foreach}
+			</div>
 		{%/if}
 		{%if isset|Edit == false}
 			<div class="simplebox grid740">
@@ -58,7 +96,7 @@
 						{%if isset|Records == true}
 							{%foreach entry in Records}
 								<tr>
-									<td><a href="dns.php?domain={%?Domain}&action=edit_record">{%?entry[name]}</a></td>
+									<td><a href="dns.php?domain={%?Domain}&action=edit_record&record={%?entry[id]}">{%?entry[name]}</a></td>
 									<td><div align="center">{%?entry[type]}</div></td>
 									<td>{%?entry[content]}</td>
 									<td><div align="center"><a original-title="Delete" class="icon-button tips" style="padding-left:5px;padding-right:5px;cursor:pointer;" href="dns.php?domain={%?Domain}&action=delete_record&record={%?entry[id]}"><img src="./templates/blue_default/img/icons/32x32/stop32.png" alt="icon" height="16" width="16"></a></div></td>
