@@ -31,7 +31,12 @@ if($LoggedIn === false){
 	}
 	
 	if(($sAction == add_record) && (!empty($sDomain))){
-	
+		$sName = $_POST['name'];
+		$sType = $_POST['type'];
+		$sContent = $_POST['content'];
+		if($sDomain = $database->CachedQuery("SELECT * FROM dns.domains WHERE `name` = :Domain", array(':Domain' => $sDomain), 1)){
+			$sAdd = $database->CachedQuery("INSERT INTO dns.records(domain_id, name, type, content, ttl, prio) VALUES(:DomainId, :Name, :Type, :Content, :TTL, :Prio)", array(':DomainId' => $sDomain->sId, ':Type' => $sType, ':Content' => $sContent, ':TTL' => 120, ':Prio' => 0), 1)
+		}
 	}
 	
 	// Setup domain list if the user hasn't selected a domain yet.
