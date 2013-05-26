@@ -111,13 +111,13 @@ status "Begining cleanup..."
 remove="apache2 apache* apache2* apache2-utils mysql* php* nginx lighttpd httpd* php5-fpm vsftpd proftpd exim qmail postfix sendmail"
 
 slaughter_httpd
-status "Cleanup Phase: 1 of 16"
+status "Cleanup Phase: 1 of 17"
 
 for program in $remove
 do
 	remove $program
 	x=$(($x + 1));
-	status "Cleanup Phase: $x of 16"
+	status "Cleanup Phase: $x of 17"
 done
 apt-get autoremove
 
@@ -135,15 +135,15 @@ cat dotdeb.gpg | apt-key add -
 rm -rf dotdeb.gpg
 apt-get update
 y=$(($y + 1));
-status "Installation-Phase 1 Step $y of 31"
+status "Install: $y of 32"
 
-install="nginx php5 vim openssl php5-mysql zip unzip sqlite3 php5-sqlite php5-curl php-pear php5-dev acl libcurl4-openssl-dev php5-gd php5-imagick php5-imap php5-mcrypt php5-xmlrpc php5-xsl php5-fpm libpcre3-dev build-essential php-apc git-core pdns-server pdns-backend-mysql host mysql-server phpmyadmin"
+install="nginx php5 vim openssl php5-mysql zip unzip sqlite3 php-mdb2-driver-mysql php5-sqlite php5-curl php-pear php5-dev acl libcurl4-openssl-dev php5-gd php5-imagick php5-imap php5-mcrypt php5-xmlrpc php5-xsl php5-fpm libpcre3-dev build-essential php-apc git-core pdns-server pdns-backend-mysql host mysql-server phpmyadmin"
 
 for program in $install
 do
 	install $program
 	y=$(($y + 1));
-	status "Install: $y / 31"
+	status "Install: $y / 32"
 done
 
 ############################################################
@@ -207,7 +207,6 @@ status "Base Config: 4 / 11"
 cp /var/neon/data/config.example /var/neon/data/config.json
 sed -i 's/databaseusernamehere/root/g' /var/neon/data/config.json
 sed -i 's/databasepasswordhere/'${mysqlpassword}'/g' /var/neon/data/config.json
-sed -i 's/databasepasswordhere/'${mysqlpassword}'/g' /usr/share/phpmyadmin/pma.php
 sed -i 's/databasenamehere/panel/g' /var/neon/data/config.json
 sed -i 's/randomlygeneratedsalthere/'${salt}'/g' /var/neon/data/config.json
 
@@ -237,6 +236,8 @@ done
 
 mysql -u root --password="$mysqlpassword" --execute="CREATE DATABASE IF NOT EXISTS panel;CREATE DATABASE IF NOT EXISTS dns;"
 mysql -u root --password="$mysqlpassword" panel < /var/neon/data.sql
+mysql -u root --password="$mysqlpassword" --execute="CREATE DATABASE IF NOT EXISTS mailserver;GRANT SELECT ON mailserver.* TO 'mailuser'@'127.0.0.1' IDENTIFIED BY '${mailpassword}';flush privileges;"
+mysql -u root --password="$mysqlpassword" mailserver < /var/neon/mail.sql
 
 cd ~/neon-install/
 status "Base Config: 6 / 11"
@@ -282,9 +283,10 @@ status "Base Config: 9 / 11"
 # Begin PHPMyAdmin Configuration
 ############################################################
 
+mv /etc/phpmyadmin/config.inc.php /etc/phpmyadmin/config.old.inc.php
 cp /var/neon/neonpanel/includes/configs/pma.php /usr/share/phpmyadmin/
-cp /etc/phpmyadmin/config.inc.php /etc/phpmyadmin/config.old.inc.php
 cp /var/neon/neonpanel/includes/configs/pma.config.inc.php /etc/phpmyadmin/config.inc.php
+sed -i 's/databasepasswordhere/'${mysqlpassword}'/g' /usr/share/phpmyadmin/pma.php
 
 cd ~/neon-install/
 status "Base Config: 10 / 11"
@@ -306,12 +308,76 @@ status "Base Config: 11 / 11"
 # Begin Installation Phase 2 of 2
 ############################################################
 
+status " "
+status "Beginning Installation Phase 2 of 2"
+debconf-set-selections <<< "postfix postfix/mailname string your.hostname.com"
+debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+apt-get install -y postfix
+w=$(($w + 1));
+status "Install: $w / "
 
+install2="dovecot-pop3d dovecot-imapd"
+
+for programs in $install2
+do
+	install $programs
+	w=$(($w + 1));
+	status "Install: $w / "
+done
+
+groupadd -g 5000 vmail
+useradd -g vmail -u 5000 vmail -d /var/vmail -m
+chown -R vmail:vmail /var/vmail
+chmod u+w /var/vmail
 
 ############################################################
 # Begin Configuration Phase 2 of 2
 ############################################################
 
+status " "
+status "Beggining Configuration Phase: 2 of 2"
+
+cp /var/neon/neonpanel/includes/configs/mail/mysql-virtual-mailbox-domains.cf /etc/postfix/mysql-virtual-mailbox-domains.cf
+sed -i 's/databasepasswordhere/'${mailpassword}'/g' /etc/postfix/mysql-virtual-mailbox-domains.cf
+
+cp /var/neon/neonpanel/includes/configs/mail/mysql-virtual-mailbox-maps.cf /etc/postfix/mysql-virtual-mailbox-maps.cf
+sed -i 's/databasepasswordhere/'${mailpassword}'/g' /etc/postfix/mysql-virtual-mailbox-maps.cf
+
+cp /var/neon/neonpanel/includes/configs/mail/mysql-virtual-alias-maps.cf /etc/postfix/mysql-virtual-alias-maps.cf
+sed -i 's/databasepasswordhere/'${mailpassword}'/g' /etc/postfix/mysql-virtual-alias-maps.cf
+
+cp /var/neon/neonpanel/includes/configs/mail/mysql-email2email.cf /etc/postfix/mysql-email2email.cf
+sed -i 's/databasepasswordhere/'${mailpassword}'/g' /etc/postfix/mysql-email2email.cf
+
+cp /var/neon/neonpanel/includes/configs/mail/dovecot-sql.conf /etc/dovecot/dovecot-sql.conf
+sed -i 's/databasepasswordhere/'${mailpassword}'/g' /etc/dovecot/dovecot-sql.conf
+
+postconf -e virtual_mailbox_domains = mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf
+postconf -e virtual_mailbox_maps = mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf
+postconf -e virtual_alias_maps = mysql:/etc/postfix/mysql-virtual-alias-maps.cf
+postconf -e virtual_alias_maps = mysql:/etc/postfix/mysql-virtual-alias-maps.cf,mysql:/etc/postfix/mysql-email2email.cf
+postconf -e virtual_transport = dovecot
+postconf -e dovecot_destination_recipient_limit = 1
+
+chgrp postfix /etc/postfix/mysql-*.cf
+chmod u=rw,g=r,o= /etc/postfix/mysql-*.cf
+sed -i 's/#mail_location =/mail_location = maildir:\/var\/vmail\/%d\/%n\/Maildir/g' /etc/dovecot/dovecot.conf
+sed -i 's/mechanisms = plain/mechanisms = plain login/g' /etc/dovecot/dovecot.conf
+sed -i 's/#passdb sql {/passdb sql {/g' /etc/dovecot/dovecot.conf
+sed -i 's/#args = \/etc\/dovecot\/dovecot-sql.conf/args = \/etc\/dovecot\/dovecot-sql.conf\n}/g' /etc/dovecot/dovecot.conf
+sed -i 's/#userdb static {/userdb static {\n args = uid=5000 gid=5000 home=\/var\/vmail\/%d\/%n allow_all_users=yes\n }/g' /etc/dovecot/dovecot.conf
+sed -i "s/# It's possible to export the authentication interface to other programs:/socket listen { \n master { \n path = \/var\/run\/dovecot\/auth-master \n mode = 0600 \n user = vmail \n } \n client { \n path = \/var\/spool\/postfix\/private\/auth \n mode = 0660 \n user = postfix \n group = postfix \n } \n }/g" /etc/dovecot/dovecot.conf
+sed -i "s/#protocol lda {/protocol lda { \n auth_socket_path = \/var\/run\/dovecot\/auth-master \n postmaster_address = postmaster@example.com \n mail_plugins = sieve \n log_path = \n }/g" /etc/dovecot/dovecot.conf
+echo "dovecot unix - n n - - pipe
+  flags=DRhu user=vmail:vmail argv=/usr/lib/dovecot/deliver -f ${sender} -d ${recipient}" >> /etc/postfix/master.cf
+
+chgrp vmail /etc/dovecot/dovecot.conf
+chmod g+r /etc/dovecot/dovecot.conf
+chown root:root /etc/dovecot/dovecot-sql.conf
+chmod go= /etc/dovecot/dovecot-sql.conf
+
+postfix reload
+/etc/init.d/dovecot restart
 
 
 ############################################################
@@ -329,6 +395,7 @@ rm -rf init.php
 cd ~/neon-install/
 (crontab -l 2>/dev/null; echo "* * * * * sh /var/neon/data/scripts/stats.sh") | crontab -
 ipaddress=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | grep -v '127.0.0.2' | cut -d: -f2 | awk '{ print $1}'`;
+mysql -u root --password="$mysqlpassword" --execute="UPDATE panel.settings SET setting_value='$ipaddress' WHERE id='5';"
 wget --delete-after http://www.neoncp.com/installer/report.php?ip=$ipaddress
 
 status "=========NEON_INSTALL_COMPLETE========"
