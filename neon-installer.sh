@@ -226,7 +226,7 @@ mv /etc/my.cnf /etc/my.cnf.backup
 cp /var/neon/neonpanel/includes/configs/my.cnf /etc/my.cnf
 /etc/init.d/mysql start
 
-salt=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};`
+salt=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};`
 mysqladmin -u root password $mysqlpassword
 
 while ! mysql -u root -p$mysqlpassword  -e ";" ; do
