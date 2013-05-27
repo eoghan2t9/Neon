@@ -65,12 +65,6 @@ function check_sanity {
 		status "Neon must be installed as root. Please log in as root and try again."
 		die "Neon must be installed on Debian 6.0."
 	fi
-	
-	if [[ $HOSTNAME != *.* ]]
-	then
-        die "You must set a valid hostname (server.example.com) before installing Neon. You can do this with the command: hostname server.example.com"
-	fi
-
 }
 
 function die {
