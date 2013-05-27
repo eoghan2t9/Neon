@@ -194,7 +194,7 @@ status "Base Config: 3 / 11"
 # Generate Passwords
 ############################################################
 
-mysqlpassword=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};`
+mysqlpassword=`< /dev/urandom tr -dc A-Z-a-z-0-9 | head -c${1:-32};`
 
 cd ~/neon-install/
 status "Base Config: 4 / 11"
